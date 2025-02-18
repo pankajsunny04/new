@@ -1,0 +1,6 @@
+skip_final_snapshot = var.final_snapshot_identifier == "" ? true : false
+final_snapshot_identifier = var.final_snapshot_identifier == "" ? null : var.final_snapshot_identifier
+
+
+final_snapshot_identifier = var.final_snapshot_identifier == "" ? "final-snapshot-${var.env}" : var.final_snapshot_identifier
+

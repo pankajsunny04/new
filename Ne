@@ -1,0 +1,25 @@
+locals {
+  timestamp = formatdate("YYYYMMDD-HHMMSS", timestamp()) # Get current date and time
+  default_snapshot_name = "${var.env}-${var.region}-${var.project}-${var.instance_number}-final-snapshot-${local.timestamp}"
+}
+
+resource "aws_rds_cluster" "aurora" {
+  cluster_identifier         = local.cluster_name
+  snapshot_identifier        = var.snapshot_arn
+  engine                     = var.engine
+  engine_version             = var.engine_version
+  database_name              = "mydatabase"
+  master_username            = var.master_username
+  master_password            = var.master_password
+  vpc_security_group_ids     = var.vpc_security_group_ids
+  db_subnet_group_name       = var.subnet_group_name
+  storage_encrypted          = true
+  kms_key_id                 = var.kms_key_id
+  backup_retention_period    = var.backup_retention_period
+  deletion_protection        = var.deletion_protection
+  apply_immediately          = true
+
+  # Skip final snapshot if not provided
+  skip_final_snapshot        = var.final_snapshot_identifier == "" ? true : false
+  final_snapshot_identifier  = var.final_snapshot_identifier != "" ? var.final_snapshot_identifier : local.default_snapshot_name
+}

@@ -1,0 +1,23 @@
+resource "aws_redshift_cluster" "aurora" {
+  cluster_identifier         = local.cluster_name
+  node_type                  = var.node_type
+  number_of_nodes            = var.number_of_nodes
+  master_username            = var.master_username
+  master_password            = var.master_password
+  snapshot_cluster_identifier = var.snapshot_identifier
+
+  # ✅ Enable Audit Logging
+  logging {
+    enable          = true
+    bucket_name     = var.redshift_log_bucket
+    s3_key_prefix   = "${local.cluster_name}-logs"
+  }
+
+  vpc_security_group_ids     = var.vpc_security_group_ids
+  cluster_subnet_group_name  = var.cluster_subnet_group_name
+  cluster_parameter_group_name = var.cluster_parameter_group_name
+  skip_final_snapshot        = true
+  final_snapshot_identifier  = var.final_snapshot_identifier
+  kms_key_id                 = var.kms_key_id
+  apply_immediately          = true
+}
